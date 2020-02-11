@@ -4,7 +4,7 @@ const database = require("../data/db");
 
 const router = express.Router();
 
-// /api/posts
+//GET /api/posts
 router.get("/", (req, res) => {
   database
     .find()
@@ -18,7 +18,7 @@ router.get("/", (req, res) => {
     });
 });
 
-// /api/posts/:id
+//GET /api/posts/:id
 router.get("/:id", (req, res) => {
   database
     .findById(req.params.id)
@@ -38,7 +38,7 @@ router.get("/:id", (req, res) => {
     });
 });
 
-// /api/posts/:id/comments
+//GET /api/posts/:id/comments
 router.get("/:id/comments", (req, res) => {
   database
     .findPostComments(req.params.id)
@@ -56,6 +56,32 @@ router.get("/:id/comments", (req, res) => {
         .status(500)
         .json({ error: "The comments information could not be retrieved" });
     });
+});
+
+//POST /api/posts
+router.post("/", (req, res) => {
+  if (!req.body.title || !req.body.contents) {
+    res
+      .status(400)
+      .json({ errorMessage: "Please provide title and contents for the post" });
+  } else {
+    database
+      .insert(req.body)
+      .then(id => {
+        const newPost = {
+          id,
+          title: req.body.title,
+          contents: req.body.contents
+        };
+
+        res.status(201).json(newPost);
+      })
+      .catch(error => {
+        res.status(500).json({
+          error: "There was an error while saving the post to the database"
+        });
+      });
+  }
 });
 
 module.exports = router;
