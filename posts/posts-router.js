@@ -38,4 +38,24 @@ router.get("/:id", (req, res) => {
     });
 });
 
+// /api/posts/:id/comments
+router.get("/:id/comments", (req, res) => {
+  database
+    .findPostComments(req.params.id)
+    .then(posts => {
+      if (posts.length !== 0) {
+        res.status(200).json(posts);
+      } else {
+        res
+          .status(404)
+          .json({ message: "The post with the specified ID does not exist" });
+      }
+    })
+    .catch(error => {
+      res
+        .status(500)
+        .json({ error: "The comments information could not be retrieved" });
+    });
+});
+
 module.exports = router;
