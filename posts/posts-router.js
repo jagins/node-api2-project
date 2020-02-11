@@ -84,4 +84,67 @@ router.post("/", (req, res) => {
   }
 });
 
+//POST /api/posts/:id/comments
+router.post("/:id/comments", (req, res) => {
+  database
+    .findById(req.params.id)
+    .then(foundId => {
+      if (foundId.length !== 0) {
+        if (!req.body.text) {
+          res
+            .status(400)
+            .json({ errorMessage: "Please provide text for the comment" });
+        } else {
+          database
+            .insertComment(req.body)
+            .then(newComment => {
+              res.status(201).json(newComment);
+            })
+            .catch(error => {
+              res.status(500).json({
+                error:
+                  "The was an error while saving the comment to the database"
+              });
+            });
+        }
+      } else {
+        res
+          .status(404)
+          .json({ message: "The post with the specified ID does not exist" });
+      }
+    })
+    .catch(error =>
+      res
+        .status(500)
+        .json({ message: "The post information could not be retrieved" })
+    );
+});
+
+router.put("/:id", (req, res) => {});
+
+//DELETE /api/posts/:id
+router.delete("/:id", (req, res) => {
+  database
+    .findById(req.params.id)
+    .then(posts => {
+      if (posts.length !== 0) {
+        database
+          .remove(req.params.id)
+          .then(removed => {
+            res.status(200).json(removed);
+          })
+          .catch(error => {
+            res.status(500).json({
+              error: "The was an error while saving the comment to the database"
+            });
+          });
+      } else {
+        res
+          .status(404)
+          .json({ message: "The post with the specified ID does not exist" });
+      }
+    })
+    .catch();
+});
+
 module.exports = router;
