@@ -90,7 +90,7 @@ router.post("/:id/comments", (req, res) =>
   database.findById(req.params.id)
   .then(posts =>
   {
-    if(posts !== 0)
+    if(posts.length !== 0)
     {
       if(!req.body.text)
       {
@@ -101,11 +101,7 @@ router.post("/:id/comments", (req, res) =>
         database.insertComment(req.body.text)
         .then(comment =>
         {
-          const newComment = {
-            id,
-            text: req.body.text
-          };
-          res.status(201).json(newComment);
+          res.status(201).json(comment);
         })
       }
     }
@@ -134,14 +130,10 @@ router.put("/:id", (req, res) =>
         }
         else 
         {
-          database.update(req.body.id, req.body)
-          .then(didUpdate => {
-            const updatedPost = {
-              title: req.body.title,
-              contents: req.body.contents
-              };
-
-              res.status(201).json(updatedPost);
+          database.update(req.params.id, req.body)
+          .then(didUpdate => 
+            {
+               res.status(201).json(didUpdate);
             })
             .catch(error =>
             {
