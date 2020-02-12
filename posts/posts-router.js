@@ -96,7 +96,7 @@ router.post("/:id/comments", (req, res) =>
       {
         const newComment = {
           text: req.body.text, 
-          post_id: req.body.post_id || req.params.id
+          post_id: req.params.id
         }
         database.insertComment(newComment)
         .then(comment =>
