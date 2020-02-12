@@ -98,7 +98,7 @@ router.post("/:id/comments", (req, res) =>
       }
       else
       {
-        database.insertComment(req.body.text)
+        database.insertComment(req.body)
         .then(comment =>
         {
           res.status(201).json(comment);
