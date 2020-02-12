@@ -94,7 +94,8 @@ router.post("/:id/comments", (req, res) =>
     {
       if(req.body.text)
       {
-        database.insertComment(req.body.text)
+        const newComment = {text: req.body.text, post_id: req.body.post_id || req.params.id}
+        database.insertComment(newComment)
         .then(comment =>
         {
           res.status(201).json(comment);
