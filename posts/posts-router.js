@@ -87,11 +87,42 @@ router.post("/", (req, res) => {
 //POST /api/posts/:id/comments
 router.post("/:id/comments", (req, res) => 
 {
- 
+  database.findById(req.params.id)
+  .then(posts =>
+  {
+    if(posts !== 0)
+    {
+      if(!req.body.text)
+      {
+        res.status(400).json({ errorMessage: "Please provide text for the comment." });
+      }
+      else
+      {
+        database.insertComment(req.body.text)
+        .then(comment =>
+        {
+          const newComment = {
+            id,
+            text: req.body.text
+          };
+          res.status(201).json(newComment);
+        })
+      }
+    }
+    else
+    {
+      res.status(500).json({message: "There was an error while saving the comment to the database"});
+    }
+  })
+  .catch(error =>
+  {
+    res.status(404).json({message: "The post with the specified ID does not exist."});
+  })
 });
 
 // PUT /api/posts/:id
-router.put("/:id", (req, res) => {
+router.put("/:id", (req, res) => 
+{
   database.findById(req.body.id)
   .then(posts =>
   {
